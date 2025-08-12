@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 import Navbar from "@/components/ui/Navbar";
+import { AuthProvider } from "@/lib/auth-context";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -29,12 +30,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased lg:px-10 lg:py-5 min-h-screen p-2`}
       >
-   <Navbar/>
+        <Navbar />
+        <AuthProvider>
+          {children}
+        </AuthProvider>
 
-        {children}
-         <p className="text-center mt-10">
-        © 2025 FocusBoard. Built for productivity and focus.
-      </p>
+        <p className="text-center mt-10">
+          © 2025 FocusBoard. Built for productivity and focus.
+        </p>
       </body>
     </html>
   );

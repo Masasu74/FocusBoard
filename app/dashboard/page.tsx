@@ -2,10 +2,18 @@ import { BookmarkCheck, Calendar, CheckCircle, ChevronDown, Clock, Loader, ScanE
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-
+import { redirect } from 'next/navigation'
+import { createClient } from '@/utils/supabase/server'
 import AddTask from "@/components/ui/AddTask";
 
-const page = () => {
+export default async function Dashboard() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    redirect('/auth/login')
+  }
+
   return (
     <div className="flex justify-between items-center flex-col w-full  md:gap-0 mt-20">
       <div className="w-full flex flex-col gap-10 flex-wrap">
@@ -13,8 +21,9 @@ const page = () => {
         <div className=" flex flex-col  items-center justify-center">
           <div className="flex flex-col gap-10 ">
             <div className="flex flex-col gap-1">
-              <p className="text-2xl font-bold">Welcome back, Salomon</p>
-              <p>Here's what's on your focus board today</p>
+              <p className="text-2xl font-bold">Welcome back, {user.user_metadata?.full_name || 'User'}</p>
+              <p>Hello {user.email}</p>
+              <p>Here&apos;s what&apos;s on your focus board today</p>
             </div>
             <div className="flex w-full justify-between items-center gap-10 flex-wrap">
               <div className="flex w-50 bg-secondary justify-between items-center p-2 rounded-lg">
@@ -65,7 +74,7 @@ const page = () => {
                   <p className="font-medium">Design focus</p>
                   <p className="text-[10px] text-blue-700 bg-blue-200 p-1 rounded-3xl">In Progress</p>
                 </div>
-                <p className="text-sm font-light">I'll implement client-side routing and mock data to demonstrate the full user flow.</p>
+                <p className="text-sm font-light">I&apos;ll implement client-side routing and mock data to demonstrate the full user flow.</p>
                 <div className="flex gap-2 justify-start items-center">
                    <Calendar size={12}/> 
                    <p className="text-sm">Aug 15, 2025</p>
@@ -77,7 +86,7 @@ const page = () => {
                   <p className="font-medium">Design focus</p>
                   <p className="text-[10px] text-blue-700 bg-blue-200 p-1 rounded-3xl">In Progress</p>
                 </div>
-                <p className="text-sm font-light">I'll implement client-side routing and mock data to demonstrate the full user flow.</p>
+                <p className="text-sm font-light">I&apos;ll implement client-side routing and mock data to demonstrate the full user flow.</p>
                 <div className="flex gap-2 justify-start items-center">
                    <Calendar size={12}/> 
                    <p className="text-sm">Aug 15, 2025</p>
@@ -89,7 +98,7 @@ const page = () => {
                   <p className="font-medium">Design focus</p>
                   <p className="text-[10px] text-blue-700 bg-blue-200 p-1 rounded-3xl">In Progress</p>
                 </div>
-                <p className="text-sm font-light">I'll implement client-side routing and mock data to demonstrate the full user flow.</p>
+                <p className="text-sm font-light">I&apos;ll implement client-side routing and mock data to demonstrate the full user flow.</p>
                 <div className="flex gap-2 justify-start items-center">
                    <Calendar size={12}/> 
                    <p className="text-sm">Aug 15, 2025</p>
@@ -107,4 +116,4 @@ const page = () => {
     </div>
   );
 };
-export default page;
+

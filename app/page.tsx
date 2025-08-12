@@ -2,7 +2,12 @@ import { CheckCircle, ScanEye, Target, Zap } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-export default function Home() {
+import { createClient } from '@/utils/supabase/server'
+
+export default async function Home() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
   return (
    
       <div className="w-full flex flex-col  flex-wrap justify-center items-center mt-30">
@@ -20,7 +25,7 @@ export default function Home() {
           </div>
           <div className="flex gap-5">
             <Button variant="default">
-              <Link href="/auth/register">Get Started Free</Link>
+              <Link href="/dashboard">Get Started Now !</Link>
             </Button>
             <Button variant="outline">
               <Link href="/auth/login">Sign In</Link>

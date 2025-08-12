@@ -1,4 +1,8 @@
+'use client'
 import { Button } from "@/components/ui/button"
+import { signup } from './actions'
+import { useSearchParams } from 'next/navigation'
+
 import {
   Card,
   CardAction,
@@ -14,6 +18,9 @@ import { MoveLeft, ScanEye } from "lucide-react"
 import Link from "next/link"
 
 const page=()=> {
+  const searchParams = useSearchParams()
+  const error = searchParams.get('error')
+  const message = searchParams.get('message')
   return (
     <div className="flex flex-col gap-5 justify-center items-center w-full mt-30">
      
@@ -27,18 +34,29 @@ const page=()=> {
         <CardDescription>
           Get Started with FocusBoard today
         </CardDescription>
+        {error && (
+            <div className="text-sm text-red-600 bg-red-50 p-3 rounded">
+              {error}
+            </div>
+          )}
+          {message && (
+            <div className="text-sm text-green-600 bg-green-50 p-3 rounded">
+              {message}
+            </div>
+          )}
         <CardAction>
           <Button variant="link"> <Link href='/auth/login'>Login</Link></Button>
         </CardAction>
       </CardHeader>
       <CardContent>
-        <form>
+        <form action={signup}>
           <div className="flex flex-col gap-6">
              <div className="grid gap-2">
-              <Label htmlFor="email">Full Name</Label>
+              <Label htmlFor="full_name">Full Name</Label>
               <Input
-                id="fname"
+                id="full_name"
                 type="text"
+                name="full_name"
                 placeholder="Enter your Full Name"
                 required
               />
@@ -48,6 +66,7 @@ const page=()=> {
               <Input
                 id="email"
                 type="email"
+                name="email"
                 placeholder="m@example.com"
                 required
               />
@@ -59,24 +78,23 @@ const page=()=> {
                 <Label htmlFor="password">Password</Label>
               
               </div>
-              <Input id="password" type="password" required  placeholder="Create a Password"/>
+              <Input id="password" type="password" name="password" required  placeholder="Create a Password"/>
             </div>
              <div className="grid gap-2">
               <div className="flex items-center">
-                <Label htmlFor="password">Confirm Password</Label>
+                <Label htmlFor="confirm_password">Confirm Password</Label>
               
               </div>
-              <Input id="password" type="password" required  placeholder="Confirm your Password"/>
+              <Input id="confirm_password" type="password" name="confirm_password"  required  placeholder="Confirm your Password"/>
             </div>
           </div>
+          <CardFooter className="flex-col gap-2 px-0 pt-6">
+            <Button type="submit" className="w-full">
+              Create Account
+            </Button>
+          </CardFooter>
         </form>
       </CardContent>
-      <CardFooter className="flex-col gap-2">
-        <Button type="submit" className="w-full">
-          Create Account
-        </Button>
-       
-      </CardFooter>
     </Card>
     </div>
     
