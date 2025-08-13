@@ -3,13 +3,11 @@
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Select,
@@ -20,49 +18,55 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createTaskAction } from "@/app/tasks/actions";
+import { updateTaskAction } from "@/app/tasks/actions";
+import { Task } from "@/lib/types";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 
-const AddTask = () => {
-  const [open, setOpen] = useState(false);
+interface EditTaskDialogProps {
+  task: Task;
+  onClose: () => void;
+  onSuccess: () => void;
+}
+
+export default function EditTaskDialog({ task, onClose, onSuccess }: EditTaskDialogProps) {
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
 
   const handleSubmit = async (formData: FormData) => {
     setLoading(true);
     try {
-      const result = await createTaskAction(formData);
+      const result = await updateTaskAction(task.id, formData);
       if (result.success) {
-        setOpen(false);
-        router.refresh();
+        onSuccess();
       } else {
-        alert(result.error || 'Failed to create task');
+        alert(result.error || 'Failed to update task');
       }
     } catch (error) {
-      alert('An error occurred while creating the task');
+      alert('An error occurred while updating the task');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="default">+ Add Task</Button>
-      </DialogTrigger>
+    <Dialog open={true} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add New Task</DialogTitle>
+          <DialogTitle>Edit Task</DialogTitle>
           <DialogDescription>
-            Create a new task to add to your focus board.
+            Update your task details.
           </DialogDescription>
         </DialogHeader>
         <form action={handleSubmit}>
           <div className="grid gap-4">
             <div className="grid gap-3">
               <Label htmlFor="title">Title</Label>
-              <Input id="title" name="title" placeholder="Enter task title" required />
+              <Input 
+                id="title" 
+                name="title" 
+                placeholder="Enter task title" 
+                defaultValue={task.title}
+                required 
+              />
             </div>
             <div className="grid gap-3">
               <Label htmlFor="description">Description</Label>
@@ -70,6 +74,7 @@ const AddTask = () => {
                 id="description"
                 name="description"
                 placeholder="Enter Description"
+                defaultValue={task.description || ''}
               />
             </div>
             <div className="grid gap-3">
@@ -78,11 +83,12 @@ const AddTask = () => {
                 type="date"
                 id="dueDate"
                 name="dueDate"
+                defaultValue={task.due_date || ''}
               />
             </div>
             <div className="grid gap-3">
               <Label htmlFor="status">Status</Label>
-              <Select name="status" defaultValue="pending">
+              <Select name="status" defaultValue={task.status}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Choose Task Status" />
                 </SelectTrigger>
@@ -95,16 +101,15 @@ const AddTask = () => {
             </div>
           </div>
           <DialogFooter>
-            <DialogClose asChild>
-              <Button type="button" variant="outline">Cancel</Button>
-            </DialogClose>
+            <Button type="button" variant="outline" onClick={onClose}>
+              Cancel
+            </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? 'Creating...' : 'Add Task'}
+              {loading ? 'Updating...' : 'Update Task'}
             </Button>
           </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>
   );
-};
-export default AddTask;
+}
